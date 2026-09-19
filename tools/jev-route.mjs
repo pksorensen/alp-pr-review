@@ -105,7 +105,7 @@ if (!hardStop) {
         human(`Jev kunne ikke spørges — linjen lukker sikkert. (${jevError})`);
         if (/HTTP 403/.test(jevError)) reasons.push('403 = repoet er ikke på runnerens allow-list: `pks typesafe allow owner/repo` på runner-værten.');
         if (/HTTP 404/.test(jevError)) reasons.push('404 = ingen nøgle på runner-værten: `pks typesafe init`.');
-        if (/HTTP 503/.test(jevError)) reasons.push('503 = runneren er startet uden TypeSafe-servicen (pks-cli før 7.4).');
+        if (/HTTP 503/.test(jevError)) reasons.push('503 = runneren er startet uden TypeSafe-servicen (pks-cli før 7.6, eller en runner der ikke sender den med).');
         if (/ENOENT|ECONNREFUSED/.test(jevError)) reasons.push('Ingen legitimationssocket: kører det her uden for et job, så sæt TYPESAFE_API_KEY.');
     }
 }

@@ -2,7 +2,7 @@
   {
     "id": "godkend-merge",
     "name": "Godkend merge",
-    "description": "Jev vurderede at et menneske skal se dette pull request før det merges — eller Jev var ikke tilgængelig, og linjen lukker sikkert. Læs reviewet på GitHub og kortets kommentar. Godkend her, så merger stationen selv når checks er grønne. Afvis, hvis PR'et ikke skal merges af linjen.",
+    "description": "Jev vurderede at et menneske skal se dette pull request før det merges — eller Jev var ikke tilgængelig, og linjen lukker sikkert. Læs reviewet på GitHub og kortets kommentar (Jevs tal står der). Godkend her, så merger stationen selv når checks er grønne. Skal det IKKE merges af linjen: der er ingen afvis-knap — luk PR'et på GitHub (merge-stationen nægter et lukket PR) eller flyt kortet til «Stoppet».",
     "requiresApproval": true
   }
 ]

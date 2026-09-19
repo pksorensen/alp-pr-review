@@ -20,7 +20,7 @@ Review ──success──▶ Jev-routing ──success────────�
 | Station | Gør | `success` | `failure` |
 |---|---|---|---|
 | **Review** | Læser diffen i projektets repo, skriver et review til GitHub og en struktureret dom. | Dommen er `approve` | Alt andet — og «forældet», «lukket», «release-pr». Reviewet står på GitHub; kortet stopper. |
-| **Jev-routing** | Hårde regler i kode → Jev over runnerens socket → tærskler. Ser aldrig PR-teksten. | Må merges uden menneske | Et menneske skal se det → kortet parkeres ved porten **Godkend merge** |
+| **Jev-routing** | Hårde regler i kode → Jev over runnerens socket → tærskler. Ser aldrig PR-teksten. | Må merges uden menneske | Et menneske skal se det → kortet parkeres ved porten **Godkend merge**. Godkend = merge-stationen kører. Porten har ingen afvis-knap: skal PR'et ikke merges, luk det på GitHub eller flyt kortet til Stoppet. |
 | **Merge** | Squash-merger — kun hvis head er uændret siden reviewet og checks er grønne. | Merget | Head flyttet, røde checks, ikke mergebar, ventetid udløbet |
 
 «Failure» er ALP v1's ene binære kanal, og linjen bruger den som «går ikke videre af sig
@@ -54,7 +54,7 @@ linjen **sikkert**: kortet går til porten med forklaringen i kommentaren.
    pks typesafe allow <owner>/<repo>       # jobs fra dette repo må spørge Jev
    pks typesafe status
    ```
-   Kræver pks-cli med `pks typesafe` (commit `97deb84` eller nyere). Uden nøgle kører
+   Kræver pks-cli med `pks typesafe` (fra 7.6.0; commit `ed664f8`). Uden nøgle kører
    linjen stadig — alt går bare til porten.
 3. **Ingress fra GitHub.** Kopiér [`workflow/alp-review.yml`](workflow/alp-review.yml) til
    `.github/workflows/alp-review.yml` i repoet, og opret to repo-secrets:
