@@ -1,0 +1,6 @@
+{
+  "createTask": {
+    "title": "PR #<nummer>: <titel>",
+    "description": "---\nsource: \"pr-review\"\nrepo: \"<owner>/<repo>\"\npr: <nummer>\nurl: \"https://github.com/<owner>/<repo>/pull/<nummer>\"\nhead: \"<head-sha ved oprettelsen>\"\nbase: \"main\"\nauthor: \"<github-login>\"\ndraft: false\nevent: \"manual\"\n---\n\nHåndoprettet kort. Normalt opretter workflowet `alp-review.yml` kortet ved hvert pull request; brug denne form når du vil køre linjen på ét bestemt PR."
+  }
+}

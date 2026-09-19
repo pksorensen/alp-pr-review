@@ -1,0 +1,8 @@
+[
+  {
+    "id": "godkend-merge",
+    "name": "Godkend merge",
+    "description": "Jev vurderede at et menneske skal se dette pull request før det merges — eller Jev var ikke tilgængelig, og linjen lukker sikkert. Læs reviewet på GitHub og kortets kommentar. Godkend her, så merger stationen selv når checks er grønne. Afvis, hvis PR'et ikke skal merges af linjen.",
+    "requiresApproval": true
+  }
+]

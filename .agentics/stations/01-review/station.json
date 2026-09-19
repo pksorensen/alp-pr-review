@@ -1,0 +1,14 @@
+{
+  "id": "review",
+  "name": "Review",
+  "trigger": {
+    "type": "dispatch_worker",
+    "autoGit": false,
+    "initBranch": false,
+    "idleTimeoutMinutes": 15,
+    "maxTimeoutMinutes": 45
+  },
+  "operatorConfig": {
+    "notify": { "channels": ["push"] }
+  }
+}

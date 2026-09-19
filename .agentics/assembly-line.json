@@ -1,0 +1,5 @@
+{
+  "name": "PR-review",
+  "description": "Reviewer hvert pull request i projektets repo, lader Jev (TypeSafe System One) afgøre om et menneske skal se det før merge, og merger selv når svaret er nej og alle checks er grønne.",
+  "version": "0.1.0"
+}

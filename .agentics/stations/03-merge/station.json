@@ -1,0 +1,15 @@
+{
+  "id": "merge",
+  "name": "Merge",
+  "trigger": {
+    "type": "dispatch_worker",
+    "autoGit": false,
+    "initBranch": false,
+    "idleTimeoutMinutes": 25,
+    "maxTimeoutMinutes": 90
+  },
+  "operatorConfig": {
+    "modelTier": "sonnet",
+    "notify": { "channels": ["push", "email"] }
+  }
+}

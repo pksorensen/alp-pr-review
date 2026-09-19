@@ -1,0 +1,5 @@
+{
+  "id": "stopped",
+  "name": "Stoppet",
+  "trigger": { "type": "none" }
+}

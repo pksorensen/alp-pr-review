@@ -1,0 +1,8 @@
+[
+  { "from": "review", "to": "route",   "condition": "success" },
+  { "from": "review", "to": "stopped", "condition": "failure" },
+  { "from": "route",  "to": "merge",   "condition": "success" },
+  { "from": "route",  "to": "merge",   "condition": "failure", "gate": "godkend-merge" },
+  { "from": "merge",  "to": "merged",  "condition": "success" },
+  { "from": "merge",  "to": "stopped", "condition": "failure" }
+]

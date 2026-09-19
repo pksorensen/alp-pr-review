@@ -1,0 +1,15 @@
+{
+  "id": "route",
+  "name": "Jev-routing",
+  "trigger": {
+    "type": "dispatch_worker",
+    "autoGit": false,
+    "initBranch": false,
+    "idleTimeoutMinutes": 10,
+    "maxTimeoutMinutes": 15
+  },
+  "operatorConfig": {
+    "modelTier": "sonnet",
+    "notify": { "channels": ["push"] }
+  }
+}
