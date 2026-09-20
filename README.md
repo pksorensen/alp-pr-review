@@ -15,6 +15,10 @@ Review ──success──▶ Jev-routing ──success────────�
 
 **Importér:** `https://agentics.dk/import?repo=https://github.com/pksorensen/alp-pr-review`
 
+Linjen står på [markedspladsen](https://agentics.dk/u/pksorensen/marketplace): `.github/workflows/publish-marketplace.yml`
+skubber kortet derover ved push til `main` via GitHub OIDC (ingen gemt hemmelighed) — bump `version`
+i `.agentics/assembly-line.json` for en ny version.
+
 ## Hvad linjen gør
 
 | Station | Gør | `success` | `failure` |

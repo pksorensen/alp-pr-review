@@ -1,0 +1,27 @@
+# Publishes this line's card to the Agentic Live marketplace whenever the
+# manifest or stations change on main. Trusted publishing: the job mints a
+# GitHub OIDC token for audience https://agentics.dk/marketplace — no stored
+# secret — and the server binds the card to this repository's identity.
+# Bump "version" in .agentics/assembly-line.json to add a version to the
+# card's history; a push without a bump re-publishes the same version.
+name: Publish to marketplace
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.agentics/assembly-line.json'
+      - '.agentics/stations/**'
+      - '.github/workflows/publish-marketplace.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pksorensen/pks-cli/.github/actions/publish-assembly-line@main
