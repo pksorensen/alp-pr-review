@@ -1,7 +1,7 @@
 {
   "name": "PR Review with Jev Routing",
   "description": "Review every pull request in the project's repo, let Jev (TypeSafe System One) decide whether a human must look before merge, and merge automatically when the answer is no and all checks are green.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "marketplace": {
     "slug": "pr-review",
     "tags": ["Code review", "GitHub", "Jev"]

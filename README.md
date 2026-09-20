@@ -52,6 +52,11 @@ linjen **sikkert**: kortet går til porten med forklaringen i kommentaren.
    udsteder GitHub-adgang for præcis det repo jobbets token blev udstedt til. **Et PR i et
    andet repo — fx et submodul under en anden ejer — kan linjen ikke nå fra dette projekt.**
    Giv hvert repo sit eget projekt og importér linjen igen dér.
+   Linjen medbringer sin egen devcontainer (`.agentics/devcontainer/`), så repoets egen
+   `.devcontainer/` bruges ikke af stationerne: runneren kræver `tmux`, `ttyd` og `claude`
+   i containeren, og en udviklings-devcontainer har typisk kun det sidste. Den installerer
+   også en git-credential-helper der taler med runnerens socket, så `git fetch` af PR'ets
+   head virker uden token i containeren.
 2. **En runner med TypeSafe-nøgle.** På runner-værten, én gang:
    ```bash
    pks typesafe init                       # nøglen bedes om skjult, valideres mod /v1/models
