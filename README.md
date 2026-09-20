@@ -61,15 +61,22 @@ linjen **sikkert**: kortet går til porten med forklaringen i kommentaren.
    Kræver pks-cli med `pks typesafe` (fra 7.6.0; commit `ed664f8`). Uden nøgle kører
    linjen stadig — alt går bare til porten.
 3. **Ingress fra GitHub.** Kopiér [`workflow/alp-review.yml`](workflow/alp-review.yml) til
-   `.github/workflows/alp-review.yml` i repoet, og opret to repo-secrets:
-   - `ALP_PR_REVIEW_URL` — `https://agentics.dk/api/owners/<owner>/projects/<project>/assembly-lines/<lineId>/tasks`.
-     `<lineId>` står i URL'en efter importen.
-   - `ALP_PR_REVIEW_TOKEN` — en ProjectConnection-token (`pct_…`) fra projektets
-     **Connections**, med scopes `tasks:write` **og** `runs:dispatch` (kortet bærer
-     etiketten `runner`, som starter første station), låst til denne linje.
+   `.github/workflows/alp-review.yml` i repoet og udfyld de tre værdier under `env:`
+   (`ALP_OWNER`, `ALP_PROJECT`, `ALP_LINE_ID` — linje-id'et står i URL'en efter importen).
+   **Ingen secrets.** Jobbet beder GitHub om et OIDC-token med linjens side-URL som
+   audience, og linjen tager imod det fordi repoet står på linjens liste
+   **Trusted GitHub repositories** (linjens *Settings* på agentics.dk — tilføj
+   `<owner>/<repo>`, lad ref/env/workflow stå tomme). Et token udstedt til én linje virker
+   ikke mod en anden, og et OIDC-kort må både oprette kortet og starte første station
+   (etiketten `runner`) — det er samme rettigheder som en connection med `tasks:write`
+   + `runs:dispatch`, bare uden en token der kan lækkes.
 
-Rækkefølgen er: importér → aflæs linje-id → opret connection → sæt secrets → merge
-workflowet. **Importér én gang.** En ny import giver en ny linje med et nyt id, og så
+   Vil du hellere have en token (fx fra et andet CI-system end GitHub), virker en
+   ProjectConnection-token (`pct_…`) med de to scopes stadig — sæt den som bearer i stedet
+   for OIDC-tokenet.
+
+Rækkefølgen er: importér → aflæs linje-id → tilføj repoet under Trusted GitHub
+repositories → merge workflowet med de tre værdier. **Importér én gang.** En ny import giver en ny linje med et nyt id, og så
 peger workflowets URL på den gamle. Opdateringer af linjen tages ved at redigere den
 levende linje; værktøjerne i `tools/` klones friske ved hvert job og kræver ingen re-import.
 

@@ -1,14 +1,16 @@
 # Sender hvert pull request som et kort til linjen «PR-review» på agentics.dk.
 #
 # Kopiér filen til .github/workflows/alp-review.yml i det repo linjen skal reviewe, og
-# opret to repo-secrets:
-#   ALP_PR_REVIEW_URL    https://agentics.dk/api/owners/<owner>/projects/<project>/assembly-lines/<lineId>/tasks
-#   ALP_PR_REVIEW_TOKEN  en ProjectConnection-token (pct_…) med scopes tasks:write + runs:dispatch,
-#                        låst til linjen. Oprettes under projektets «Connections».
+# udfyld de tre værdier under `env:` nedenfor. Der er INGEN secrets: jobbet beder GitHub
+# om et OIDC-token for linjens URL, og linjen tager imod det fordi repoet står på linjens
+# liste «Trusted GitHub repositories» (linjens Settings på agentics.dk). Et token udstedt
+# til én linje kan ikke bruges mod en anden — audience er linjens egen URL.
 #
 # Hvert push til PR'et giver et nyt kort; det gamle stopper sig selv som «forældet» når
 # review-stationen ser at head har flyttet sig. Release-please-PR'er springes over her:
 # en release er en menneskelig beslutning, og der er intet at reviewe i en changelog.
+# PR'er fra forks springes også over: GitHub udsteder ikke OIDC-tokens til dem, og linjens
+# hårde regler sender alligevel forks til et menneske.
 
 name: ALP PR review
 
@@ -24,6 +26,13 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  id-token: write
+
+env:
+  ALP_SERVER: https://agentics.dk
+  ALP_OWNER: <owner>          # handle på agentics.dk
+  ALP_PROJECT: <project>      # projektets id i URL'en
+  ALP_LINE_ID: <lineId>       # står i URL'en efter importen
 
 concurrency:
   group: alp-review-${{ github.event.pull_request.number || inputs.pr }}
@@ -34,6 +43,7 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.fork == false &&
        !startsWith(github.event.pull_request.head.ref, 'release-please--'))
     runs-on: ubuntu-latest
     steps:
@@ -50,14 +60,21 @@ jobs:
 
       - name: Send kortet til linjen
         env:
-          LINE_URL: ${{ secrets.ALP_PR_REVIEW_URL }}
-          LINE_TOKEN: ${{ secrets.ALP_PR_REVIEW_TOKEN }}
           EVENT: ${{ github.event.action || 'manual' }}
         run: |
-          if [ -z "$LINE_URL" ] || [ -z "$LINE_TOKEN" ]; then
-            echo "::warning::ALP_PR_REVIEW_URL / ALP_PR_REVIEW_TOKEN er ikke sat — intet kort sendt."
-            exit 0
+          case "$ALP_OWNER$ALP_PROJECT$ALP_LINE_ID" in *'<'*)
+            echo "::error::Udfyld ALP_OWNER, ALP_PROJECT og ALP_LINE_ID under env: i workflowet."; exit 1;;
+          esac
+          LINE_PAGE="$ALP_SERVER/p/$ALP_OWNER/$ALP_PROJECT/assembly-lines/$ALP_LINE_ID"
+          LINE_URL="$ALP_SERVER/api/owners/$ALP_OWNER/projects/$ALP_PROJECT/assembly-lines/$ALP_LINE_ID/tasks"
+
+          # OIDC-token for præcis denne linje (audience = linjens side-URL). Ingen secrets.
+          OIDC=$(curl -sS -G -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            --data-urlencode "audience=$LINE_PAGE" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value // empty')
+          if [ -z "$OIDC" ]; then
+            echo "::error::Kunne ikke få et OIDC-token — har jobbet 'permissions: id-token: write'?"; exit 1
           fi
+
           # Titlen er fremmed tekst: én linje, afkortet. Beskrivelsen er frontmatter +
           # en kort forklaring; PR-teksten selv henter stationen fra GitHub, som data.
           jq -c --arg repo "$GITHUB_REPOSITORY" --arg event "$EVENT" '
@@ -83,7 +100,11 @@ jobs:
               priority: "medium"
             }' pr.json > card.json
           code=$(curl -sS -o resp.json -w '%{http_code}' -X POST "$LINE_URL" \
-            -H "Authorization: Bearer $LINE_TOKEN" -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $OIDC" -H "Content-Type: application/json" \
             --data @card.json)
           echo "HTTP $code"; cat resp.json; echo
-          [ "$code" = "200" ] || [ "$code" = "201" ] || { echo "::error::Linjen afviste kortet (HTTP $code)"; exit 1; }
+          case "$code" in
+            200|201) ;;
+            403) echo "::error::Linjen afviste tokenet (403): står $GITHUB_REPOSITORY på linjens «Trusted GitHub repositories»? ($LINE_PAGE/settings)"; exit 1;;
+            *) echo "::error::Linjen afviste kortet (HTTP $code)"; exit 1;;
+          esac
